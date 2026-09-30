@@ -1,0 +1,15 @@
+{
+  "name": "globalmz",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "GLOBAL·MZ — loja de compras internacionais (EUA e China) com entrega em Moçambique",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.4.11"
+  }
+}
