@@ -165,3 +165,110 @@ function closeModal(){
 document.querySelectorAll("[data-doc]").forEach(b => b.addEventListener("click", () => openDoc(b.dataset.doc)));
 modal.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", closeModal));
 addEventListener("keydown", e => { if (e.key === "Escape"){ closeModal(); setMenu(false); } });
+
+/* ---------- calculadora AliExpress ---------- */
+const AX_RATES = { USD:64, CNY:9, EUR:74, MZN:1 };
+
+function axURLfrom(text){
+  const m = String(text).match(/https?:\/\/[^\s"'<>]+/i);
+  if (!m) return null;
+  const url = m[0].replace(/[)\].,;:!?"']+$/, "");
+  return /^https?:\/\/(?:[a-z0-9-]+\.)*aliexpress\.[a-z.]{2,}(\/|$)/i.test(url) ? url : null;
+}
+
+const axLink = document.getElementById("axLink");
+const axGo = document.getElementById("axGo");
+const axPrice = document.getElementById("axPrice");
+const axStatus = document.getElementById("axStatus");
+const axOut = document.getElementById("axOut");
+const axName = document.getElementById("axName");
+const axBase = document.getElementById("axBase");
+const axFee = document.getElementById("axFee");
+const axTotal = document.getElementById("axTotal");
+const axRule = document.getElementById("axRule");
+const axWa = document.getElementById("axWa");
+let axInfo = { url:"", name:"" };
+
+function axFmt(n){ return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " MT"; }
+function axSay(msg, cls){ axStatus.textContent = msg; axStatus.className = "calc-status" + (cls ? " " + cls : ""); }
+
+function axRender(){
+  const base = parseFloat(axPrice.value);
+  if (!(base > 0)){ axOut.hidden = true; return; }
+  const small = base < 1000;
+  const fee = small ? 600 : Math.round(base * .3) + 250;
+  const total = base + fee;
+  axOut.hidden = false;
+  axName.hidden = !axInfo.name;
+  if (axInfo.name) axName.textContent = axInfo.name;
+  axBase.textContent = axFmt(base);
+  axFee.textContent = axFmt(fee);
+  axTotal.textContent = axFmt(total);
+  axRule.textContent = small ? "Regra aplicada: abaixo de 1000 MT → + 600 MT fixos" : "Regra aplicada: 1000 MT ou mais → + 30% e + 250 MT";
+  const lines = ["Olá! Quero encomendar este produto do AliExpress:"];
+  if (axInfo.name) lines.push("Produto: " + axInfo.name);
+  if (axInfo.url) lines.push("Link: " + axInfo.url);
+  lines.push("Preço do produto: " + axFmt(base));
+  lines.push("Serviço + transporte: " + axFmt(fee));
+  lines.push("TOTAL: " + axFmt(total));
+  lines.push(small ? "(regra: abaixo de 1000 MT → +600 MT)" : "(regra: 1000 MT ou mais → +30% e +250 MT)");
+  lines.push("Pode confirmar, por favor?");
+  axWa.href = waURL(lines.join("\n"));
+}
+axPrice.addEventListener("input", axRender);
+
+async function axProductAPI(url){
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 57000);
+  try{
+    const r = await fetch("/api/product?url=" + encodeURIComponent(url), {signal: ctl.signal});
+    let j = null;
+    try{ j = await r.json(); }catch{}
+    if (!r.ok) throw new Error((j && j.error) || "__bad");
+    return j;
+  }finally{
+    clearTimeout(timer);
+  }
+}
+
+async function axLookup(){
+  const raw = axLink.value.trim();
+  if (!raw){ axSay("Cole o link do produto do AliExpress.", "err"); axLink.focus(); return; }
+  const url = axURLfrom(raw);
+  if (!url){ axSay("Esse link não é do AliExpress.", "err"); axLink.focus(); return; }
+  axInfo = { url, name:"" };
+  axSay("A ler o produto no AliExpress… pode demorar até 45 segundos.");
+  axGo.disabled = true;
+  try{
+    const j = await axProductAPI(url);
+    if (j && j.ok && j.price > 0){
+      const mt = j.mt > 0 ? j.mt : Math.round(j.price * (AX_RATES[j.currency] || 1));
+      axInfo.name = j.title || "";
+      axPrice.value = mt;
+      axRender();
+      axSay("Preço encontrado: " + j.price + " " + j.currency + " = " + axFmt(mt) + " (taxa " + (j.rate || AX_RATES[j.currency] || 1) + " MT por 1 " + j.currency + ")", "ok");
+      return;
+    }
+    if (j && j.title){
+      axInfo.name = j.title;
+      axSay("Produto: " + j.title + " — não consegui ler o preço. Escreva o preço em MT abaixo.", "err");
+      axPrice.focus();
+      return;
+    }
+    throw new Error((j && j.error) || "falha");
+  }catch(e){
+    if (e.name === "AbortError"){
+      axSay("Demorou demasiado. Escreva o preço em MT abaixo.", "err");
+      axPrice.focus();
+    }else if (e.message && e.message.length < 150 && !/^Failed|Network|__bad/i.test(e.message)){
+      axSay(e.message, "err");
+    }else{
+      axSay("Não consegui ler o preço automaticamente. Escreva o preço em MT abaixo.", "err");
+      axPrice.focus();
+    }
+  }finally{
+    axGo.disabled = false;
+  }
+}
+axGo.addEventListener("click", axLookup);
+axLink.addEventListener("keydown", e => { if (e.key === "Enter") axLookup(); });

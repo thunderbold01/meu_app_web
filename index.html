@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt">
 <head>
 <meta charset="UTF-8">
@@ -8,11 +8,11 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="color-scheme" content="light">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
-<meta http-equiv="X-Frame-Options" content="DENY">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/styles.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230a7d3f'/><text x='16' y='23' font-family='Arial' font-size='19' font-weight='700' fill='white' text-anchor='middle'>G</text></svg>">
 </head>
 <body>
 
@@ -62,6 +62,7 @@
     <nav class="nav-links" aria-label="Navegação principal">
       <a href="#inicio" data-spy="inicio">Início</a>
       <a href="#processo" data-spy="processo">Processo</a>
+      <a href="#calcular" data-spy="calcular">Calcular</a>
     </nav>
     <div class="head-cta">
       <a class="btn btn-glass btn-glass-green btn-sm" data-wa data-msg="Olá! Quero fazer uma encomenda internacional."><svg><use href="#i-wa"/></svg>Falar agora</a>
@@ -74,6 +75,7 @@
 <div class="m-menu" id="mMenu">
   <a class="m-link" href="#inicio"><small>01</small>Início</a>
   <a class="m-link" href="#processo"><small>02</small>Processo</a>
+  <a class="m-link" href="#calcular"><small>03</small>Calcular</a>
   <div class="m-contacts">
     <a class="btn btn-glass btn-glass-green on-dark btn-sm" data-wa data-msg="Olá! Quero fazer uma encomenda internacional."><svg><use href="#i-wa"/></svg>WhatsApp</a>
     <a class="btn btn-glass on-dark btn-sm" data-tel><svg><use href="#i-phone"/></svg>Ligar agora</a>
@@ -125,7 +127,7 @@
   </figure>
 </section>
 
-<!-- ============ 04 · COMO FUNCIONA ============ -->
+<!-- ============ 02 · COMO FUNCIONA ============ -->
 <section class="panel sec sec-paper" id="processo">
   <div class="sh-ring-l" style="width:260px;height:260px;right:-100px;bottom:6%" aria-hidden="true"></div>
   <div class="container">
@@ -167,6 +169,45 @@
 
     <div style="text-align:center;margin-top:16px" class="sl">
       <a class="btn btn-glass btn-glass-green btn-lg" data-wa data-msg="Olá! Quero enviar um produto para cotação."><svg><use href="#i-wa"/></svg>Começar pelo WhatsApp</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · CALCULADORA ALIEXPRESS ============ -->
+<section class="panel sec sec-white" id="calcular">
+  <div class="sh-ring-l" style="width:300px;height:300px;left:-120px;bottom:4%" aria-hidden="true"></div>
+  <div class="container">
+    <span class="kicker sl">03 — Calculadora AliExpress</span>
+    <h2 class="h2 sl" style="--d:.06s">Descubra o preço <em>final em Moçambique</em></h2>
+    <p class="lead sl" style="--d:.12s">Cole o link do produto no AliExpress e calculamos tudo para si. Se preferir, escreva o preço à mão.</p>
+
+    <div class="calc-card sl" style="--d:.18s">
+      <label class="calc-label" for="axLink">Link do produto AliExpress</label>
+      <div class="calc-input-row">
+        <input class="ax-in" type="url" id="axLink" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://pt.aliexpress.com/item/1005001234567890.html">
+        <button class="btn btn-amber" id="axGo" type="button"><svg><use href="#i-search"/></svg>Calcular preço</button>
+      </div>
+      <p class="calc-hint">Pode colar também o texto de partilha do AliExpress — extraímos o link automaticamente.</p>
+
+      <div class="calc-sep"><span>ou escreva o preço</span></div>
+
+      <label class="calc-label" for="axPrice">Preço do produto (MT)</label>
+      <div class="calc-input-row">
+        <input class="ax-in" type="number" id="axPrice" min="0" step="1" inputmode="numeric" placeholder="Ex.: 850">
+      </div>
+
+      <p class="calc-status" id="axStatus" role="status"></p>
+
+      <div class="calc-out" id="axOut" hidden>
+        <p class="calc-prod" id="axName" hidden></p>
+        <div class="calc-grid">
+          <div class="calc-box"><small>Produto</small><b id="axBase">—</b></div>
+          <div class="calc-box"><small>Serviço + transporte</small><b id="axFee">—</b></div>
+          <div class="calc-box calc-res"><small>Total em Moçambique</small><b id="axTotal">—</b></div>
+        </div>
+        <p class="calc-rule" id="axRule"></p>
+        <a class="btn btn-glass btn-glass-green btn-lg" id="axWa" href="#" target="_blank" rel="noopener noreferrer"><svg><use href="#i-wa"/></svg>Enviar pelo WhatsApp</a>
+      </div>
     </div>
   </div>
 </section>
