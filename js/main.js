@@ -217,6 +217,42 @@ function axRender(){
 }
 axPrice.addEventListener("input", axRender);
 
+function axPriceFromText(text){
+  const t = String(text || "");
+  let cur = null, val = NaN;
+  const m = t.match(/(US\s*\$|US\$|CN¥|CNY\s*¥|€|¥)\s*(\d+(?:[.,]\d{1,2})?)/i);
+  if (m){
+    cur = /CN|¥/i.test(m[1]) ? "CNY" : /€/.test(m[1]) ? "EUR" : "USD";
+    val = parseFloat(m[2].replace(",", "."));
+  }
+  if (!(val > 0)){
+    try{
+      const link = t.match(/https?:\/\/\S+/);
+      const n = link ? new URL(link[0]).searchParams.get("pdp_npi") : null;
+      if (n){
+        const p = n.split("!");
+        const i = p.findIndex(x => /^[A-Z]{3}$/.test(x));
+        if (i > -1){
+          const num = x => parseFloat(String(x == null ? "" : x).replace(",", "."));
+          const sale = num(p[i + 2]), orig = num(p[i + 1]);
+          cur = p[i];
+          val = sale > 0 ? sale : orig;
+        }
+      }
+    }catch{}
+  }
+  if (!(val > 0) || val > 1e7 || !cur) return null;
+  return { value: val, currency: cur };
+}
+
+function axApplyLocal(hit){
+  const rate = AX_RATES[hit.currency] || 1;
+  const mt = Math.round(hit.value * rate);
+  axPrice.value = mt;
+  axRender();
+  axSay("Preço lido do link: " + hit.value + " " + hit.currency + " = " + axFmt(mt) + " (taxa " + rate + " MT por 1 " + hit.currency + "). Se quiser, confirme o valor à mão.", "ok");
+}
+
 async function axProductAPI(url){
   const ctl = new AbortController();
   const timer = setTimeout(() => ctl.abort(), 57000);
@@ -224,7 +260,7 @@ async function axProductAPI(url){
     const r = await fetch("/api/product?url=" + encodeURIComponent(url), {signal: ctl.signal});
     let j = null;
     try{ j = await r.json(); }catch{}
-    if (!r.ok) throw new Error((j && j.error) || "__bad");
+    if (!r.ok) throw new Error((j && j.error) || ("__http" + r.status));
     return j;
   }finally{
     clearTimeout(timer);
@@ -249,6 +285,12 @@ async function axLookup(){
       axSay("Preço encontrado: " + j.price + " " + j.currency + " = " + axFmt(mt) + " (taxa " + (j.rate || AX_RATES[j.currency] || 1) + " MT por 1 " + j.currency + ")", "ok");
       return;
     }
+    const local = axPriceFromText(raw);
+    if (local){
+      if (j && j.title) axInfo.name = j.title;
+      axApplyLocal(local);
+      return;
+    }
     if (j && j.title){
       axInfo.name = j.title;
       axSay("Produto: " + j.title + " — não consegui ler o preço. Escreva o preço em MT abaixo.", "err");
@@ -257,10 +299,17 @@ async function axLookup(){
     }
     throw new Error((j && j.error) || "falha");
   }catch(e){
-    if (e.name === "AbortError"){
+    const gone = /n[ãa]o existe|removido/i.test(e.message || "");
+    const local = gone ? null : axPriceFromText(raw);
+    if (local){
+      axApplyLocal(local);
+    }else if (e.name === "AbortError"){
       axSay("Demorou demasiado. Escreva o preço em MT abaixo.", "err");
       axPrice.focus();
-    }else if (e.message && e.message.length < 150 && !/^Failed|Network|__bad/i.test(e.message)){
+    }else if (/^__http\d+$/.test(e.message || "")){
+      axSay("O servidor não respondeu (erro " + e.message.slice(6) + "). Tente outra vez ou escreva o preço em MT abaixo.", "err");
+      axPrice.focus();
+    }else if (e.message && e.message.length < 150 && !/^Failed|Network/i.test(e.message)){
       axSay(e.message, "err");
     }else{
       axSay("Não consegui ler o preço automaticamente. Escreva o preço em MT abaixo.", "err");

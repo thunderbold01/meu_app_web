@@ -81,18 +81,23 @@ function parsePdp(text) {
     const s = String(text).trim();
     const json = JSON.parse(s.startsWith("{") ? s : s.slice(s.indexOf("(") + 1, s.lastIndexOf(")")));
     const res = json?.data?.result;
-    if (!res || !res.PRICE) return null;
-    const t = res.PRICE.targetSkuPriceInfo || {};
-    let priceStr = t.salePriceString || String(t.salePriceLocal || "").split("|")[0] || "";
-    if (!priceStr) {
-      const first = Object.values(res.PRICE.skuPriceInfoMap || {})[0];
-      if (first) priceStr = first.salePriceString || String(first.salePriceLocal || "").split("|")[0] || "";
+    if (!res) return null;
+    let priceStr = "";
+    if (res.PRICE) {
+      const t = res.PRICE.targetSkuPriceInfo || {};
+      priceStr = t.salePriceString || String(t.salePriceLocal || "").split("|")[0] || "";
+      if (!priceStr) {
+        const first = Object.values(res.PRICE.skuPriceInfoMap || {})[0];
+        if (first) priceStr = first.salePriceString || String(first.salePriceLocal || "").split("|")[0] || "";
+      }
     }
+    const PRICE_KEYS = ["salePriceString", "formatedActivityPrice", "formatedPrice", "displayMinPrice", "displaySalePrice"];
     let subject = "";
     const walk = (o, d) => {
-      if (subject || !o || typeof o !== "object" || d > 12) return;
+      if ((subject && priceStr) || !o || typeof o !== "object" || d > 14) return;
       for (const k of Object.keys(o)) {
-        if (/^(subject|productSubject)$/i.test(k) && typeof o[k] === "string" && o[k].length > 4) { subject = o[k]; return; }
+        if (!subject && /^(subject|productSubject)$/i.test(k) && typeof o[k] === "string" && o[k].length > 4) subject = o[k];
+        else if (!priceStr && PRICE_KEYS.includes(k) && typeof o[k] === "string" && /\d/.test(o[k])) priceStr = o[k];
         if (o[k] && typeof o[k] === "object") walk(o[k], d + 1);
       }
     };
@@ -133,16 +138,14 @@ async function render(url) {
       if (pdp) return { priceText: pdp.priceStr, title: cleanTitle(pdp.subject), captcha: false, source: "pdp" };
     }
 
-    if (!pdpDone) {
-      const domWait = Math.max(0, Math.min(5000, t0 + 50000 - Date.now()));
-      if (domWait) {
-        await page
-          .waitForFunction(() => {
-            const el = document.querySelector('[class*="price-default--current"],[class*="price--current"]');
-            return !!(el && /\d/.test(el.textContent));
-          }, { timeout: domWait })
-          .catch(() => {});
-      }
+    const domWait = Math.max(0, Math.min(5000, t0 + 50000 - Date.now()));
+    if (domWait) {
+      await page
+        .waitForFunction(() => {
+          const el = document.querySelector('[class*="price-default--current"],[class*="price--current"]');
+          return !!(el && /\d/.test(el.textContent));
+        }, { timeout: domWait })
+        .catch(() => {});
     }
     const out = await page.evaluate(() => {
       const clean = s => (s || "").replace(/\s+/g, " ").trim();
@@ -153,7 +156,7 @@ async function render(url) {
       }
       const bodyText = clean(document.body.innerText).slice(0, 5000);
       const captcha = /drag the slider|verify to ensure|captcha verification/i.test(bodyText);
-      const notFound = /P[áa]gina n[ãa]o encontrada|page not found/i.test(bodyText);
+      const notFound = /P[áa]gina n[ãa]o encontrada|page not found|does not exist/i.test(bodyText);
       return { priceText, title: clean(document.title), captcha, notFound, source: "dom" };
     });
     if (out.notFound) {
