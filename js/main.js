@@ -268,6 +268,10 @@ async function axLookup(){
   if (!raw){ axSay("Cole o link do produto do AliExpress.", "err"); axLink.focus(); return; }
   const url = axURLfrom(raw);
   if (!url){ axSay("Esse link não é do AliExpress.", "err"); axLink.focus(); return; }
+  if (location.protocol === "file:"){
+    axSay("O site está aberto como ficheiro — a consulta automática não funciona aqui. Corra npm run dev ou use o site publicado.", "err");
+    return;
+  }
   axInfo = { url, name:"" };
   axSay("A ler o produto no AliExpress… pode demorar até 45 segundos.");
   axGo.disabled = true;
@@ -308,7 +312,8 @@ async function axLookup(){
     }else if (e.message && e.message.length < 150 && !/^Failed|Network/i.test(e.message)){
       axSay(e.message, "err");
     }else{
-      axSay("Não consegui ler o preço automaticamente. Escreva o preço em MT abaixo.", "err");
+      const det = e && e.message ? " (" + e.message.slice(0, 70) + ")" : "";
+      axSay("Não consegui ler o preço automaticamente" + det + ". Escreva o preço em MT abaixo.", "err");
       axPrice.focus();
     }
   }finally{
