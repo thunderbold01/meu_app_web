@@ -182,8 +182,6 @@ const axPrice = document.getElementById("axPrice");
 const axStatus = document.getElementById("axStatus");
 const axOut = document.getElementById("axOut");
 const axName = document.getElementById("axName");
-const axBase = document.getElementById("axBase");
-const axFee = document.getElementById("axFee");
 const axTotal = document.getElementById("axTotal");
 const axRule = document.getElementById("axRule");
 const axWa = document.getElementById("axWa");
@@ -201,8 +199,6 @@ function axRender(){
   axOut.hidden = false;
   axName.hidden = !axInfo.name;
   if (axInfo.name) axName.textContent = axInfo.name;
-  axBase.textContent = axFmt(base);
-  axFee.textContent = axFmt(fee);
   axTotal.textContent = axFmt(total);
   axRule.textContent = small ? "Regra aplicada: abaixo de 1000 MT → + 600 MT fixos" : "Regra aplicada: 1000 MT ou mais → + 30% e + 250 MT";
   const lines = ["Olá! Quero encomendar este produto do AliExpress:"];
