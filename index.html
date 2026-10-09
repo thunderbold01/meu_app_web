@@ -62,7 +62,7 @@
     <nav class="nav-links" aria-label="Navegação principal">
       <a href="#inicio" data-spy="inicio">Início</a>
       <a href="#processo" data-spy="processo">Processo</a>
-      <a href="#calcular" data-spy="calcular">Calcular</a>
+      <a href="#lojas" data-spy="lojas">Lojas</a>
     </nav>
     <div class="head-cta">
       <a class="btn btn-glass btn-glass-green btn-sm" data-wa data-msg="Olá! Quero fazer uma encomenda internacional."><svg><use href="#i-wa"/></svg>Falar agora</a>
@@ -75,7 +75,7 @@
 <div class="m-menu" id="mMenu">
   <a class="m-link" href="#inicio"><small>01</small>Início</a>
   <a class="m-link" href="#processo"><small>02</small>Processo</a>
-  <a class="m-link" href="#calcular"><small>03</small>Calcular</a>
+  <a class="m-link" href="#lojas"><small>03</small>Lojas</a>
   <div class="m-contacts">
     <a class="btn btn-glass btn-glass-green on-dark btn-sm" data-wa data-msg="Olá! Quero fazer uma encomenda internacional."><svg><use href="#i-wa"/></svg>WhatsApp</a>
     <a class="btn btn-glass on-dark btn-sm" data-tel><svg><use href="#i-phone"/></svg>Ligar agora</a>
@@ -173,60 +173,32 @@
   </div>
 </section>
 
-<!-- ============ 03 · LOJAS + CALCULADORA ============ -->
-<section class="panel sec sec-white" id="calcular">
+<!-- ============ 03 · LOJAS ============ -->
+<section class="panel sec sec-white" id="lojas">
   <div class="sh-ring-l" style="width:300px;height:300px;left:-120px;bottom:4%" aria-hidden="true"></div>
   <div class="container">
-    <span class="kicker sl">03 — Lojas e Calculadora</span>
+    <span class="kicker sl">03 — Lojas</span>
     <h2 class="h2 sl" style="--d:.06s">Compre onde quiser, receba <em>em Moçambique</em></h2>
-    <p class="lead sl" style="--d:.12s">Abra a loja aqui mesmo, escolha o produto e copie o link. Calculamos o preço final para si e enviamos tudo pelo WhatsApp — anexe o print do produto na conversa.</p>
+    <p class="lead sl" style="--d:.12s">Abra a loja aqui mesmo, escolha o produto e envie-nos o link ou uma foto pelo WhatsApp — nós compramos, transportamos e entregamos em Moçambique.</p>
 
     <div class="calc-card sl" style="--d:.18s">
       <span class="calc-label">Escolha a loja</span>
       <div class="calc-stores">
-        <a class="calc-store" href="https://pt.aliexpress.com/" target="_blank" rel="noopener noreferrer">
+        <a class="calc-store" href="https://pt.aliexpress.com/">
           <span class="cs-mark cs-ali">Ali</span>
           <span class="cs-name">AliExpress</span>
-          <span class="cs-go">Abrir loja ↗</span>
+          <span class="cs-go">Abrir loja</span>
         </a>
-        <a class="calc-store" href="https://www.alibaba.com/" target="_blank" rel="noopener noreferrer">
+        <a class="calc-store" href="https://www.alibaba.com/">
           <span class="cs-mark cs-alb">Al</span>
           <span class="cs-name">Alibaba</span>
-          <span class="cs-go">Abrir loja ↗</span>
+          <span class="cs-go">Abrir loja</span>
         </a>
-        <a class="calc-store" href="https://www.shein.com/" target="_blank" rel="noopener noreferrer">
+        <a class="calc-store" href="https://www.shein.com/">
           <span class="cs-mark cs-shein">Sh</span>
           <span class="cs-name">SHEIN</span>
-          <span class="cs-go">Abrir loja ↗</span>
+          <span class="cs-go">Abrir loja</span>
         </a>
-      </div>
-
-      <div class="calc-sep"><span>já escolheu? cole o link</span></div>
-
-      <label class="calc-label" for="axLink">Link do produto</label>
-      <div class="calc-input-row">
-        <input class="ax-in" type="url" id="axLink" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://pt.aliexpress.com/item/1005001234567890.html">
-        <button class="btn btn-amber" id="axGo" type="button"><svg><use href="#i-search"/></svg>Calcular preço</button>
-      </div>
-      <p class="calc-hint">Aceitamos links do AliExpress, Alibaba e SHEIN — pode colar também o texto de partilha do produto.</p>
-
-      <div class="calc-sep"><span>ou escreva o preço</span></div>
-
-      <label class="calc-label" for="axPrice">Preço do produto (MT)</label>
-      <div class="calc-input-row">
-        <input class="ax-in" type="number" id="axPrice" min="0" step="1" inputmode="numeric" placeholder="Ex.: 850">
-      </div>
-
-      <p class="calc-status" id="axStatus" role="status"></p>
-
-      <div class="calc-out" id="axOut" hidden>
-        <p class="calc-prod" id="axName" hidden></p>
-        <div class="calc-grid">
-          <div class="calc-box calc-res"><small>Total em Moçambique</small><b id="axTotal">—</b></div>
-        </div>
-        <p class="calc-rule" id="axRule"></p>
-        <a class="btn btn-glass btn-glass-green btn-lg" id="axWa" href="#" target="_blank" rel="noopener noreferrer"><svg><use href="#i-wa"/></svg>Enviar pelo WhatsApp</a>
-        <p class="calc-hint calc-wa-note">Na conversa, anexe um print (captura de ecrã) do produto para confirmarmos o valor.</p>
       </div>
     </div>
   </div>
@@ -268,6 +240,6 @@
   </div>
 </div>
 
-<script src="js/main.js?v=3"></script>
+<script src="js/main.js?v=4"></script>
 </body>
 </html>

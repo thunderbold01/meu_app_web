@@ -380,7 +380,7 @@ section{scroll-margin-top:118px}
 .modal-body ul{padding-left:20px;display:grid;gap:6px;margin:8px 0}
 .modal-body .fine{font-size:.8rem;margin-top:20px;padding-top:14px;border-top:1px dashed var(--line-ink)}
 
-/* ============ CALCULADORA ALIEXPRESS ============ */
+/* ============ LOJAS ============ */
 .calc-stores{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:6px}
 .calc-store{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:18px;border:1.5px solid var(--line-ink);border-radius:24px;background:#fff;text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
 .calc-store:hover,.calc-store:focus-visible{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,25,48,.12);border-color:var(--cyan-deep)}
@@ -392,23 +392,6 @@ section{scroll-margin-top:118px}
 .cs-go{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-ink);font-weight:600}
 .calc-card{background:var(--paper);border:1px solid var(--line-ink);border-radius:36px;padding:clamp(24px,3.5vw,42px);margin-top:34px;box-shadow:0 24px 60px rgba(10,25,48,.1);max-width:880px}
 .calc-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-ink);font-weight:600;margin-bottom:10px}
-.calc-input-row{display:flex;gap:12px}
-.ax-in{flex:1;min-width:0;font:inherit;font-size:1rem;padding:15px 20px;border-radius:var(--pill);border:1.5px solid var(--line-ink);background:#fff;color:var(--ink);outline:none;transition:border-color .2s,box-shadow .2s}
-.ax-in:focus{border-color:var(--cyan-deep);box-shadow:0 0 0 4px rgba(18,183,198,.15)}
-.ax-in::placeholder{color:#9AA7B5}
-.calc-hint{font-size:.82rem;color:var(--muted-ink);margin-top:9px}
-.calc-sep{display:flex;align-items:center;gap:14px;margin:24px 0;color:var(--muted-ink);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase}
-.calc-sep::before,.calc-sep::after{content:"";flex:1;border-top:1px dashed var(--line-ink)}
-.calc-status{font-size:.9rem;margin-top:16px;color:var(--ink-soft);min-height:1.2em}
-.calc-status.err{color:var(--red);font-weight:600}
-.calc-status.ok{color:#0E7C46;font-weight:600}
-.calc-out{margin-top:26px;border-top:1px dashed var(--line-ink);padding-top:26px}
-.calc-prod{font-weight:750;font-size:1.02rem;color:var(--ink);margin-bottom:14px}
-.calc-grid{display:flex;flex-wrap:wrap;gap:14px}
-.calc-grid .calc-\boxed{flex:1;min-width:160px}
-.calc-grid .calc-res b{font-size:1.35rem}
-.calc-rule{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-ink);margin:18px 0 22px}
-.calc-wa-note{margin-top:14px}
 
 /* ============ RESPONSIVO ============ */
 @media (max-width:1020px){
@@ -444,9 +427,6 @@ section{scroll-margin-top:118px}
   .end-photos figure{aspect-ratio:4/3}
   .btn{width:100%}
   .hero-ctas{flex-direction:column;align-items:stretch}
-  .calc-box{flex:1;min-width:calc(50% - 24px)}
-  .calc-input-row{flex-direction:column}
-  .calc-input-row .btn{width:100%}
   .protect{padding:28px 22px;border-radius:34px}
   .mcell.m-g{flex-direction:column;align-items:flex-start;gap:12px}
   .head-pill{padding:8px 10px 8px 16px}
