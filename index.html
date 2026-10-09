@@ -200,6 +200,7 @@
           <span class="cs-go">Abrir loja</span>
         </a>
       </div>
+      <p class="calc-hint">A loja abre aqui mesmo, dentro do site — sem mudar de página.</p>
     </div>
   </div>
 </section>
@@ -240,6 +241,24 @@
   </div>
 </div>
 
-<script src="js/main.js?v=4"></script>
+<!-- ============ LOJA DENTRO DO SITE ============ -->
+<div class="loja-ov" id="lojaOv" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Loja">
+  <div class="loja-bar">
+    <button class="loja-btn" id="lojaBack" type="button" aria-label="Voltar ao site"><svg><use href="#i-arr-l"/></svg></button>
+    <span class="loja-url"><svg class="loja-lock"><use href="#i-lock"/></svg><b id="lojaNome">Loja</b><i id="lojaHost"></i></span>
+    <button class="loja-btn" id="lojaClose" type="button" aria-label="Fechar loja"><svg><use href="#i-x"/></svg></button>
+  </div>
+  <div class="loja-stage">
+    <iframe class="loja-frame" id="lojaFrame" title="Loja" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <div class="loja-load" id="lojaLoad">
+      <span class="loja-spin"></span>
+      <p class="loja-load-txt">A abrir a loja…</p>
+      <p class="loja-load-slow">Se a loja não abrir aqui, continue na página.</p>
+      <button class="btn btn-amber btn-sm loja-escape" id="lojaEscape" type="button">Continuar na página</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/main.js?v=5"></script>
 </body>
 </html>

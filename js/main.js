@@ -164,4 +164,86 @@ function closeModal(){
 }
 document.querySelectorAll("[data-doc]").forEach(b => b.addEventListener("click", () => openDoc(b.dataset.doc)));
 modal.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", closeModal));
-addEventListener("keydown", e => { if (e.key === "Escape"){ closeModal(); setMenu(false); } });
+addEventListener("keydown", e => { if (e.key === "Escape"){ closeModal(); setMenu(false); lojaSair(); } });
+
+/* ---------- lojas dentro do próprio site ---------- */
+const lojaOv = document.getElementById("lojaOv");
+const lojaFrame = document.getElementById("lojaFrame");
+const lojaNome = document.getElementById("lojaNome");
+const lojaHost = document.getElementById("lojaHost");
+const lojaLoad = document.getElementById("lojaLoad");
+const lojaLoadTxt = lojaLoad.querySelector(".loja-load-txt");
+const LOJA_TXT = lojaLoadTxt ? lojaLoadTxt.textContent : "";
+let lojaUrl = "", lojaAberto = false, lojaPush = false, lojaPronto = false;
+let lojaAbertoEm = 0, lojaTimers = [], lojaPoll = 0;
+
+function lojaAgenda(fn, ms){ const t = setTimeout(fn, ms); lojaTimers.push(t); }
+function lojaPara(){ lojaTimers.forEach(clearTimeout); lojaTimers = []; if (lojaPoll){ clearInterval(lojaPoll); lojaPoll = 0; } }
+function lojaSubframes(){
+  try{ return lojaFrame.contentWindow.length; }catch{ return -1; }
+}
+function lojaProntoOk(){
+  if (lojaPronto) return;
+  lojaPronto = true;
+  lojaLoad.hidden = true;
+}
+function lojaBloqueado(){
+  if (lojaPronto || !lojaAberto) return;
+  const t = lojaLoad.querySelector(".loja-load-txt");
+  if (t) t.textContent = "Esta loja não permite abrir dentro do site — a continuar na página…";
+  lojaAgenda(() => { if (lojaAberto && !lojaPronto) location.href = lojaUrl; }, 900);
+}
+function lojaAbrir(url, nome){
+  if (!url) return;
+  lojaUrl = url;
+  lojaNome.textContent = nome || "Loja";
+  let host = ""; try{ host = new URL(url).hostname; }catch{}
+  lojaHost.textContent = host;
+  lojaAberto = true; lojaPronto = false; lojaAbertoEm = Date.now();
+  lojaOv.hidden = false; lojaOv.setAttribute("aria-hidden", "false");
+  lojaLoad.hidden = false; lojaLoad.classList.remove("slow");
+  if (lojaLoadTxt) lojaLoadTxt.textContent = LOJA_TXT;
+  document.body.style.overflow = "hidden";
+  lojaFrame.src = url;
+  if (!lojaPush){ history.pushState({ loja: 1 }, "", location.href); lojaPush = true; }
+  lojaPoll = setInterval(() => { if (lojaSubframes() > 0) lojaProntoOk(); }, 1500);
+  lojaAgenda(() => { if (lojaAberto && !lojaPronto) lojaLoad.classList.add("slow"); }, 12000);
+}
+function lojaFechar(){
+  if (!lojaAberto) return;
+  lojaAberto = false; lojaPush = false;
+  lojaPara();
+  lojaLoad.classList.remove("slow");
+  lojaOv.hidden = true; lojaOv.setAttribute("aria-hidden", "true");
+  lojaFrame.src = "about:blank";
+  document.body.style.overflow = "";
+}
+function lojaSair(){
+  if (!lojaAberto) return;
+  if (lojaPush) history.back();
+  else lojaFechar();
+}
+lojaFrame.addEventListener("load", () => {
+  if (!lojaAberto || lojaPronto) return;
+  if (Date.now() - lojaAbertoEm > 6000) return;
+  lojaAgenda(() => {
+    if (!lojaAberto || lojaPronto) return;
+    if (lojaSubframes() > 0){ lojaProntoOk(); return; }
+    lojaAgenda(() => {
+      if (!lojaAberto || lojaPronto) return;
+      if (lojaSubframes() > 0) lojaProntoOk();
+      else lojaBloqueado();
+    }, 1300);
+  }, 700);
+});
+document.getElementById("lojaBack").addEventListener("click", lojaSair);
+document.getElementById("lojaClose").addEventListener("click", lojaSair);
+document.getElementById("lojaEscape").addEventListener("click", () => { if (lojaUrl) location.href = lojaUrl; });
+addEventListener("popstate", () => { if (lojaAberto) lojaFechar(); });
+document.querySelectorAll(".calc-store").forEach(a => {
+  a.addEventListener("click", e => {
+    e.preventDefault();
+    const n = a.querySelector(".cs-name");
+    lojaAbrir(a.href, n ? n.textContent.trim() : "Loja");
+  });
+});
