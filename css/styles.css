@@ -381,6 +381,15 @@ section{scroll-margin-top:118px}
 .modal-body .fine{font-size:.8rem;margin-top:20px;padding-top:14px;border-top:1px dashed var(--line-ink)}
 
 /* ============ CALCULADORA ALIEXPRESS ============ */
+.calc-stores{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin-bottom:6px}
+.calc-store{display:flex;flex-direction:column;align-items:flex-start;gap:7px;padding:18px;border:1.5px solid var(--line-ink);border-radius:24px;background:#fff;text-decoration:none;color:var(--ink);transition:transform .2s,box-shadow .2s,border-color .2s}
+.calc-store:hover,.calc-store:focus-visible{transform:translateY(-3px);box-shadow:0 16px 34px rgba(10,25,48,.12);border-color:var(--cyan-deep)}
+.cs-mark{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;font-family:'IBM Plex Mono',monospace;font-weight:700;color:#fff;font-size:.95rem;letter-spacing:.02em}
+.cs-ali{background:#e62e04}
+.cs-alb{background:#ff6a00}
+.cs-shein{background:#111}
+.cs-name{font-weight:800;font-size:1.05rem}
+.cs-go{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-ink);font-weight:600}
 .calc-card{background:var(--paper);border:1px solid var(--line-ink);border-radius:36px;padding:clamp(24px,3.5vw,42px);margin-top:34px;box-shadow:0 24px 60px rgba(10,25,48,.1);max-width:880px}
 .calc-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-ink);font-weight:600;margin-bottom:10px}
 .calc-input-row{display:flex;gap:12px}
@@ -399,6 +408,7 @@ section{scroll-margin-top:118px}
 .calc-grid .calc-\boxed{flex:1;min-width:160px}
 .calc-grid .calc-res b{font-size:1.35rem}
 .calc-rule{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-ink);margin:18px 0 22px}
+.calc-wa-note{margin-top:14px}
 
 /* ============ RESPONSIVO ============ */
 @media (max-width:1020px){

@@ -166,14 +166,19 @@ document.querySelectorAll("[data-doc]").forEach(b => b.addEventListener("click",
 modal.querySelectorAll("[data-close]").forEach(el => el.addEventListener("click", closeModal));
 addEventListener("keydown", e => { if (e.key === "Escape"){ closeModal(); setMenu(false); } });
 
-/* ---------- calculadora AliExpress ---------- */
+/* ---------- lojas + calculadora ---------- */
 const AX_RATES = { USD:64, CNY:9, EUR:74, MZN:1 };
 
 function axURLfrom(text){
   const m = String(text).match(/https?:\/\/[^\s"'<>]+/i);
   if (!m) return null;
   const url = m[0].replace(/[)\].,;:!?"']+$/, "");
-  return /^https?:\/\/(?:[a-z0-9-]+\.)*aliexpress\.[a-z.]{2,}(\/|$)/i.test(url) ? url : null;
+  let host = "";
+  try{ host = new URL(url).hostname.toLowerCase(); }catch{ return null; }
+  const ok = /(^|\.)aliexpress\.[a-z.]+$/.test(host)
+    || /(^|\.)alibaba\.com$/.test(host)
+    || /(^|\.)shein\./.test(host);
+  return ok ? url : null;
 }
 
 const axLink = document.getElementById("axLink");
@@ -201,7 +206,7 @@ function axRender(){
   if (axInfo.name) axName.textContent = axInfo.name;
   axTotal.textContent = axFmt(total);
   axRule.textContent = small ? "Regra aplicada: abaixo de 1000 MT → + 600 MT fixos" : "Regra aplicada: 1000 MT ou mais → + 30% e + 250 MT";
-  const lines = ["Olá! Quero encomendar este produto do AliExpress:"];
+  const lines = ["Olá! Quero encomendar este produto:"];
   if (axInfo.name) lines.push("Produto: " + axInfo.name);
   if (axInfo.url) lines.push("Link: " + axInfo.url);
   lines.push("Preço do produto: " + axFmt(base));
@@ -211,7 +216,13 @@ function axRender(){
   lines.push("Pode confirmar, por favor?");
   axWa.href = waURL(lines.join("\n"));
 }
-axPrice.addEventListener("input", axRender);
+function axSyncLink(){
+  if (!axInfo.url){
+    const u = axURLfrom(axLink.value);
+    if (u) axInfo.url = u;
+  }
+}
+axPrice.addEventListener("input", () => { axSyncLink(); axRender(); });
 
 function axPriceFromText(text){
   const t = String(text || "");
@@ -249,76 +260,26 @@ function axApplyLocal(hit){
   axSay("Preço lido do link: " + hit.value + " " + hit.currency + " = " + axFmt(mt) + " (taxa " + rate + " MT por 1 " + hit.currency + "). Se quiser, confirme o valor à mão.", "ok");
 }
 
-async function axProductAPI(url){
-  const ctl = new AbortController();
-  const timer = setTimeout(() => ctl.abort(), 57000);
-  try{
-    const r = await fetch("/api/product?url=" + encodeURIComponent(url), {signal: ctl.signal});
-    let j = null;
-    try{ j = await r.json(); }catch{}
-    if (!r.ok) throw new Error((j && j.error) || ("__http" + r.status));
-    return j;
-  }finally{
-    clearTimeout(timer);
-  }
+function axScrollToOut(){
+  if (!axOut.hidden) axOut.scrollIntoView({ behavior:"smooth", block:"nearest" });
 }
 
-async function axLookup(){
+function axLookup(){
   const raw = axLink.value.trim();
-  if (!raw){ axSay("Cole o link do produto do AliExpress.", "err"); axLink.focus(); return; }
+  if (!raw){ axSay("Cole o link do produto (AliExpress, Alibaba ou SHEIN).", "err"); axLink.focus(); return; }
   const url = axURLfrom(raw);
-  if (!url){ axSay("Esse link não é do AliExpress.", "err"); axLink.focus(); return; }
-  if (location.protocol === "file:"){
-    axSay("O site está aberto como ficheiro — a consulta automática não funciona aqui. Corra npm run dev ou use o site publicado.", "err");
+  if (!url){ axSay("Esse link não é do AliExpress, Alibaba nem SHEIN.", "err"); axLink.focus(); return; }
+  axInfo = { url, name:"" };
+  const hit = axPriceFromText(raw);
+  if (hit){ axApplyLocal(hit); axScrollToOut(); return; }
+  if (parseFloat(axPrice.value) > 0){
+    axRender();
+    axSay("Link guardado. Confirme o total em baixo.", "ok");
+    axScrollToOut();
     return;
   }
-  axInfo = { url, name:"" };
-  axSay("A ler o produto no AliExpress… pode demorar até 45 segundos.");
-  axGo.disabled = true;
-  try{
-    const j = await axProductAPI(url);
-    if (j && j.ok && j.price > 0){
-      const mt = j.mt > 0 ? j.mt : Math.round(j.price * (AX_RATES[j.currency] || 1));
-      axInfo.name = j.title || "";
-      axPrice.value = mt;
-      axRender();
-      axSay("Preço encontrado: " + j.price + " " + j.currency + " = " + axFmt(mt) + " (taxa " + (j.rate || AX_RATES[j.currency] || 1) + " MT por 1 " + j.currency + ")", "ok");
-      return;
-    }
-    const local = axPriceFromText(raw);
-    if (local){
-      if (j && j.title) axInfo.name = j.title;
-      axApplyLocal(local);
-      return;
-    }
-    if (j && j.title){
-      axInfo.name = j.title;
-      axSay("Produto: " + j.title + " — não consegui ler o preço. Escreva o preço em MT abaixo.", "err");
-      axPrice.focus();
-      return;
-    }
-    throw new Error((j && j.error) || "falha");
-  }catch(e){
-    const gone = /n[ãa]o existe|removido/i.test(e.message || "");
-    const local = gone ? null : axPriceFromText(raw);
-    if (local){
-      axApplyLocal(local);
-    }else if (e.name === "AbortError"){
-      axSay("Demorou demasiado. Escreva o preço em MT abaixo.", "err");
-      axPrice.focus();
-    }else if (/^__http\d+$/.test(e.message || "")){
-      axSay("O servidor não respondeu (erro " + e.message.slice(6) + "). Tente outra vez ou escreva o preço em MT abaixo.", "err");
-      axPrice.focus();
-    }else if (e.message && e.message.length < 150 && !/^Failed|Network/i.test(e.message)){
-      axSay(e.message, "err");
-    }else{
-      const det = e && e.message ? " (" + e.message.slice(0, 70) + ")" : "";
-      axSay("Não consegui ler o preço automaticamente" + det + ". Escreva o preço em MT abaixo.", "err");
-      axPrice.focus();
-    }
-  }finally{
-    axGo.disabled = false;
-  }
+  axSay("Link guardado. Agora escreva o preço do produto em MT.");
+  axPrice.focus();
 }
 axGo.addEventListener("click", axLookup);
 axLink.addEventListener("keydown", e => { if (e.key === "Enter") axLookup(); });

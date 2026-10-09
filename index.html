@@ -173,21 +173,42 @@
   </div>
 </section>
 
-<!-- ============ 03 · CALCULADORA ALIEXPRESS ============ -->
+<!-- ============ 03 · LOJAS + CALCULADORA ============ -->
 <section class="panel sec sec-white" id="calcular">
   <div class="sh-ring-l" style="width:300px;height:300px;left:-120px;bottom:4%" aria-hidden="true"></div>
   <div class="container">
-    <span class="kicker sl">03 — Calculadora AliExpress</span>
-    <h2 class="h2 sl" style="--d:.06s">Descubra o preço <em>final em Moçambique</em></h2>
-    <p class="lead sl" style="--d:.12s">Cole o link do produto no AliExpress e calculamos tudo para si. Se preferir, escreva o preço à mão.</p>
+    <span class="kicker sl">03 — Lojas e Calculadora</span>
+    <h2 class="h2 sl" style="--d:.06s">Compre onde quiser, receba <em>em Moçambique</em></h2>
+    <p class="lead sl" style="--d:.12s">Abra a loja aqui mesmo, escolha o produto e copie o link. Calculamos o preço final para si e enviamos tudo pelo WhatsApp — anexe o print do produto na conversa.</p>
 
     <div class="calc-card sl" style="--d:.18s">
-      <label class="calc-label" for="axLink">Link do produto AliExpress</label>
+      <span class="calc-label">Escolha a loja</span>
+      <div class="calc-stores">
+        <a class="calc-store" href="https://pt.aliexpress.com/" target="_blank" rel="noopener noreferrer">
+          <span class="cs-mark cs-ali">Ali</span>
+          <span class="cs-name">AliExpress</span>
+          <span class="cs-go">Abrir loja ↗</span>
+        </a>
+        <a class="calc-store" href="https://www.alibaba.com/" target="_blank" rel="noopener noreferrer">
+          <span class="cs-mark cs-alb">Al</span>
+          <span class="cs-name">Alibaba</span>
+          <span class="cs-go">Abrir loja ↗</span>
+        </a>
+        <a class="calc-store" href="https://www.shein.com/" target="_blank" rel="noopener noreferrer">
+          <span class="cs-mark cs-shein">Sh</span>
+          <span class="cs-name">SHEIN</span>
+          <span class="cs-go">Abrir loja ↗</span>
+        </a>
+      </div>
+
+      <div class="calc-sep"><span>já escolheu? cole o link</span></div>
+
+      <label class="calc-label" for="axLink">Link do produto</label>
       <div class="calc-input-row">
         <input class="ax-in" type="url" id="axLink" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://pt.aliexpress.com/item/1005001234567890.html">
         <button class="btn btn-amber" id="axGo" type="button"><svg><use href="#i-search"/></svg>Calcular preço</button>
       </div>
-      <p class="calc-hint">Pode colar também o texto de partilha do AliExpress — extraímos o link automaticamente.</p>
+      <p class="calc-hint">Aceitamos links do AliExpress, Alibaba e SHEIN — pode colar também o texto de partilha do produto.</p>
 
       <div class="calc-sep"><span>ou escreva o preço</span></div>
 
@@ -205,6 +226,7 @@
         </div>
         <p class="calc-rule" id="axRule"></p>
         <a class="btn btn-glass btn-glass-green btn-lg" id="axWa" href="#" target="_blank" rel="noopener noreferrer"><svg><use href="#i-wa"/></svg>Enviar pelo WhatsApp</a>
+        <p class="calc-hint calc-wa-note">Na conversa, anexe um print (captura de ecrã) do produto para confirmarmos o valor.</p>
       </div>
     </div>
   </div>
